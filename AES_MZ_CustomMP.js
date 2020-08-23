@@ -111,23 +111,6 @@ Aesica.Toolkit.customMpVersion = 1.0;
 * This plugin also improves the appearance and clarity of skill costs
 * by allowing MP and TP costs to display together for skills requiring both.
 *
-* Note on compatibility with Yanfly's Skill Core:
-*
-* This plugin overrides how Skill Core displays skill costs in the skill
-* menus.  While the two plugins do so similarly, this one does not include
-* the option to have icons by each resource type.  The other functionalities
-* of Skill Core are unaffected.
-*
-* If using YEP_SkillCore's ability to give skills HP costs, this plugin 
-* will display those costs for the sake of compatibility.  When used, any
-* HP cost skills will perform as expected.
-*
-* This plugin should be placed below YEP_SkilLCore for maximum functionality,
-* although if the hp/mp/tp resource icons are preferred, placing it above
-* YEP_SkillCore will allow that plugin to render costs its way instead, however
-* skill costs will display MP and use the specified MP color regardless of 
-* any MP aliasing a given class has.
-* 
 * ----------------------------------------------------------------------
 *
 * Rage-like MP gain
@@ -383,7 +366,7 @@ Aesica.Toolkit.customMpVersion = 1.0;
 			this.drawText(text, x, y, dw, 'right');
 			dw = dw - this.textWidth(text) - 4;
 		}
-		if (Imported.YEP_SkillCore)
+		if (Imported.YEP_SkillCore) // TODO
 		{
 			if (this._actor.skillHpCost(skill) > 0)
 			{
