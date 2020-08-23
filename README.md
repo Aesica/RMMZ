@@ -23,7 +23,7 @@ No guarantees yet, but give it time!
 Info:  Allows for MP labels and gauges to be modified on an per-class basis.  Among other things
 Initial Version:  1.8
 - Change the colors of the MP gauge
-- Change the MP label
+- Change the colors and label of the MP cost displayed for skills
 - Modify how RecoverAll behaves in relation to HP and MP
 - Add HP and MP recovery (or loss) after battle
 - Allow MP to be recovered when taking damage, filterable by type
