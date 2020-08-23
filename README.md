@@ -4,7 +4,7 @@ https://www.patreon.com/aesica
 ## Aesica's RMMZ Plugins - Terms of Use
 These terms apply to every RMMZ plugin in this repo:
 - Free to use in both free and commercial projects as long as I am given credit.
-- Forked versions of these plugins are fine as long as I am given credit.
+- Forked versions of these plugins are fine as long as I am given credit and the forked version must remain free.
 - You may edit the code as needed to fit your game
 - You may NOT remove my name from the @author section, you may NOT remove the link to this readme from the @help section, and you may NOT attempt to otherwise pass my work off as your own (come on, we all know that's a dick move, so don't be one~)
 - A copy of your game (once completed) would be nice so I can see how my scripts are being used, but it's not required.
