@@ -14,7 +14,7 @@ These terms apply to every RMMZ plugin in this repo:
 - List my name (Aesica) in your game's credits under your scripts/code section, or under "Scripting" if you don't yet have a scripting section.  Easy peasy, right? :D
 
 ## Compatibility with ~~Yanfly~~ Visustella plugins
-These plugins are intended to be compatible with this set, just as the RMMV versions were with Yanfly's plugins unless otherwise noted.  Currently, this may not always be the case as I've only just started working with RMMZ, so stand by!
+No guarantees yet, but give it time!
 
 
 ## Features and Changelog
