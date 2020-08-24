@@ -16,7 +16,7 @@ These terms apply to every RMMZ plugin in this repo:
 ## Compatibility with visustella plugins
 The closed-source, obfuscated nature of the visustella plugin suite, as well as the plugins' role as a loss leader/advertisement for paid plugin developers, is not something I wish to condone or stand behind as an advocate for free and open-source software.  So, unlike with my MV plugins, compatibility with the visustella plugin suite is not a concern and I won't be going out of my way to ensure it.  That said, if I can make a given plugin work with the visustella plugin suite after completion, I'll outline the instructions required to do so in the plugin's description.
 
-Sorry if that's a disappointment to anyone.
+Sorry if that's a disappointment to anyone, but on the bright side, it means I'll have a greater degree of flexibility and more potential features.
 
 ## Features and Changelog
 
