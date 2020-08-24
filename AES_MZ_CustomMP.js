@@ -41,12 +41,34 @@ Aesica.Toolkit.customMpVersion = 1.0;
 * <Note>value > 5</Note>    Eval:  "value > 5" (good)
 * <Note: value > 5>			Eval:  "value "    (bad)
 *
-* What this plugin does:
-* 
+* ----------------------------------------------------------------------
+* VisuStella Compatibility
 * ----------------------------------------------------------------------
 *
-* MP Bar Styling
+* This plugin is compatible, however a few extra steps will need to be taken on
+* your end if you're using VisuMZ_1_SkillsStatesCore:
 *
+* In the plugin's parameters, navigate to the following:
+*
+* Skill Cost Types -> "MP" -> JS: Draw Gauge
+*
+* Locate and replace the following lines:
+*
+* const color1 = ColorManager.mpGaugeColor1();
+* const color2 = ColorManager.mpGaugeColor2();
+* const label = TextManager.mpA;
+*
+* With the following in their respective locations:
+*
+* const color1 = sprite._color1;
+* const color2 = sprite._color2;
+* const label = user.mpA;
+*
+* It should now work as expected.
+*
+* ----------------------------------------------------------------------
+* MP Bar Styling
+* ----------------------------------------------------------------------
 * Enables different classes to have different styling for their MP bar,
 * such as name and color, via note tags:
 * 
