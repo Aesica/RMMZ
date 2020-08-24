@@ -13,8 +13,8 @@ These terms apply to every RMMZ plugin in this repo:
 ## How to Credit Me
 - List my name (Aesica) in your game's credits under your scripts/code section, or under "Scripting" if you don't yet have a scripting section.  Easy peasy, right? :D
 
-## Compatibility with ~~Yanfly~~ Visustella plugins
-No guarantees yet, but give it time!
+## Compatibility with ~~Yanfly's~~ Visustella plugins
+So far, everything here should be compatible, however, due to the closed-source, obfuscated nature of the visustella plugin suite, some extra steps may be required to make them work together properly.  Directions for doing so (if necessary) will be outlined in the help text for each of my applicable plugins, near the top.
 
 
 ## Features and Changelog
