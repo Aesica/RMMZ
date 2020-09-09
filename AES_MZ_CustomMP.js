@@ -2,11 +2,12 @@ var Imported = Imported || {};
 Imported.AES_CustomMP = true;
 var Aesica = Aesica || {};
 Aesica.CMP = Aesica.CMP || {};
-Aesica.CMP.version = 1.8;
+Aesica.CMP.version = 1.85;
 Aesica.Toolkit = Aesica.Toolkit || {};
 Aesica.Toolkit.customMpVersion = 1.0;
 /*:
-* @plugindesc v1.8 Adds the ability to customize MP styling and recovery for each class
+* @target MZ
+* @plugindesc v1.85 Adds the ability to customize MP styling and recovery for each class
 *
 * @author Aesica
 *
@@ -423,51 +424,65 @@ Aesica.Toolkit.customMpVersion = 1.0;
 /**-------------------------------------------------------------------
 	Recovery functions
 //-------------------------------------------------------------------*/
+	$$.BattleManager_processVictory = BattleManager.processVictory;
+	BattleManager.processVictory = function()
+	{
+		$$.BattleManager_processVictory.call(this);
+		$gameParty.afterBattleRecovery();
+	};
+	Game_Party.prototype.afterBattleRecovery = function()
+	{
+		for (let member of $gameParty.members()) member.afterBattleRecovery();
+	};
+	Game_BattlerBase.prototype.afterBattleRecovery = function()
+	{
+		var hpFormulaList, mpFormulaList, rawEval;
+		var actor = this;
+		if (actor.isActor())
+		{
+			if (actor.isDead() && actor.getTag("After Battle Revive", true).length > 0) actor.removeState(1);
+			hpFormulaList = actor.getTag("After Battle Recover HP", true);
+			mpFormulaList = actor.getTag("After Battle Recover MP", true);
+			console.log(this.name() + ": after battle recovery test");
+			if (!actor.isStateAffected(1))
+			{
+				for (i in hpFormulaList)
+				{
+					try
+					{
+						rawEval = hpFormulaList[i];
+						actor.gainHp(Math.floor(+eval(rawEval)) || 0);
+						console.log(rawEval);
+					}
+					catch(e)
+					{
+						console.log("AES_CustomMP: Eval error in <After Battle Recover HP> => " + rawEval);
+					}
+				}
+				for (i in mpFormulaList)
+				{
+					try
+					{
+						rawEval = mpFormulaList[i];
+						actor.gainMp(Math.floor(+eval(rawEval)) || 0);
+						console.log(rawEval);
+					}
+					catch(e)
+					{
+						console.log("AES_CustomMP: Eval error in <After Battle Recover MP> => " + rawEval);
+					}
+				}
+				actor.refresh();
+			}
+		}
+	};	
 	Game_BattlerBase.prototype.recoverAll = function()
 	{
 		this.clearStates();
 		this._hp = Aesica.Toolkit.tagExists.call($dataClasses[this._classId], "Recover All HP") ? Math.floor(+Aesica.Toolkit.getTag.call($dataClasses[this._classId], "Recover All HP") * this.mhp) : this.mhp;
 		this._mp = Aesica.Toolkit.tagExists.call($dataClasses[this._classId], "Recover All MP") ? Math.floor(+Aesica.Toolkit.getTag.call($dataClasses[this._classId], "Recover All MP") * this.mmp) : this.mmp;
 		this.refresh();
-	}
-	$$.Game_Battler_removeBattleStates = Game_Battler.prototype.removeBattleStates;
-	Game_Battler.prototype.removeBattleStates = function()
-	{
-		var hpFormulaList, mpFormulaList, rawEval;
-		var actor = this;
-		if (actor.isDead() && actor.getTag("After Battle Revive", true).length > 0) actor.removeState(1);
-		$$.Game_Battler_removeBattleStates.call(this);
-		hpFormulaList = actor.getTag("After Battle Recover HP", true);
-		mpFormulaList = actor.getTag("After Battle Recover MP", true);
-		if (!actor.isStateAffected(1))
-		{
-			for (i in hpFormulaList)
-			{
-				try
-				{
-					rawEval = hpFormulaList[i];
-					actor.gainHp(Math.floor(+eval(rawEval)) || 0);
-				}
-				catch(e)
-				{
-					console.log("AES_CustomMP: Eval error in <After Battle Recover HP> => " + rawEval);
-				}
-			}
-			for (i in mpFormulaList)
-			{
-				try
-				{
-					rawEval = mpFormulaList[i];
-					actor.gainMp(Math.floor(+eval(rawEval)) || 0);
-				}
-				catch(e)
-				{
-					console.log("AES_CustomMP: Eval error in <After Battle Recover MP> => " + rawEval);
-				}
-			}
-			actor.refresh();
-		}
-	}
+	};
 /**-------------------------------------------------------------------
 	Action-based MP gain functions
 //-------------------------------------------------------------------*/
