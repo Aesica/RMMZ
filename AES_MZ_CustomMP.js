@@ -443,7 +443,6 @@ Aesica.Toolkit.customMpVersion = 1.0;
 			if (actor.isDead() && actor.getTag("After Battle Revive", true).length > 0) actor.removeState(1);
 			hpFormulaList = actor.getTag("After Battle Recover HP", true);
 			mpFormulaList = actor.getTag("After Battle Recover MP", true);
-			console.log(this.name() + ": after battle recovery test");
 			if (!actor.isStateAffected(1))
 			{
 				for (i in hpFormulaList)
@@ -452,7 +451,6 @@ Aesica.Toolkit.customMpVersion = 1.0;
 					{
 						rawEval = hpFormulaList[i];
 						actor.gainHp(Math.floor(+eval(rawEval)) || 0);
-						console.log(rawEval);
 					}
 					catch(e)
 					{
@@ -465,7 +463,6 @@ Aesica.Toolkit.customMpVersion = 1.0;
 					{
 						rawEval = mpFormulaList[i];
 						actor.gainMp(Math.floor(+eval(rawEval)) || 0);
-						console.log(rawEval);
 					}
 					catch(e)
 					{
