@@ -22,6 +22,9 @@ Sorry if that's a disappointment to anyone, but on the bright side, it means I'l
 ### AES_MZ_CustomMP
 Info:  Allows for MP labels and gauges to be modified on an per-class basis.  Among other things
 
+**9/9/2020 - 1.85**
+- Fixed a bug where the after battle recovery effects were being invoked twice
+
 **Initial Version:  1.8**
 - Change the colors of the MP gauge
 - Change the colors and label of the MP cost displayed for skills
