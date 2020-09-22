@@ -19,6 +19,22 @@ Sorry if that's a disappointment to anyone, but on the bright side, it means I'l
 
 ## Features and Changelog
 
+### AES_MZ_CommandControl
+Info:  Allows for all sorts of actor battle command manipulations and enhancements
+
+**Initial Version:  2.0**
+- Able to enable/disable attack, guard, and item globally or on an per character/class/equip/state basis
+- Can replace the attack command, optionally requiring certain conditions to be met in order to do so
+- Able to move certain commands, such as guard, over to a left or right sub-menu
+- Can re-order commands by type (attack, limit, single, skills, guard, item, etc)
+- Can unleash special abilities when using basic attack, based on certain conditions combined with random chance
+- Can seal the item command on an actor/class/equip/state
+- Can set single skills on the actor command window, similar to attack
+- Able to repurpose TP into a limit break resource, showing a special command once TP reaches a certain threshold--either temporarily overwriting the attack command or appearing as an extra, temporary command in the actor command window
+- Can apply states when an actor guards in addition to the standard guard effect.  These effects can be applied to either the user or even the entire party
+
+
+
 ### AES_MZ_CustomMP
 Info:  Allows for MP labels and gauges to be modified on an per-class basis.  Among other things
 
