@@ -135,16 +135,9 @@ Imported[Aesica.CommandControl.name] = true;
 * ----------------------------------------------------------------------
 * Allows certain commands to be moved to a special sub-command menu, accessed
 * when the player presses left or right on their keyboard/controller.  These
-* commands can be set in either the plugin parameters or, for single skill
-* commands, the following note tag can be placed directly on the skill itself:
+* commands can be set in the plugin parameters:
 *
-* <Command Page: Left>
-* <Command Page: Right>
-*
-* Note 1:  Attack and Guard count as single skill commands and thus can make
-* use of this note tag.
-*
-* Note 2:  This system is currently NOT touch-friendly, so any game intended
+* Note:  This system is currently NOT touch-friendly, so any game intended
 * for touch devices should probably not make use of this feature.
 *
 * ----------------------------------------------------------------------
@@ -426,7 +419,7 @@ Imported[Aesica.CommandControl.name] = true;
 		{
 			if ($$.params.rightCommandList.contains(skillName)) result = 1;
 			else if ($$.params.leftCommandList.contains(skillName)) result = -1;
-			if (skill)
+			if (skill) // deprecated
 			{
 				skillTag = Aesica.Toolkit.getTag.call(skill, "Command Page");
 				if (String(skillTag).toLowerCase() === "right") result = 1;
