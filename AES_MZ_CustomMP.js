@@ -2,12 +2,12 @@ var Imported = Imported || {};
 Imported.AES_CustomMP = true;
 var Aesica = Aesica || {};
 Aesica.CMP = Aesica.CMP || {};
-Aesica.CMP.version = 1.85;
+Aesica.CMP.version = 1.9;
 Aesica.Toolkit = Aesica.Toolkit || {};
 Aesica.Toolkit.customMpVersion = 1.0;
 /*:
 * @target MZ
-* @plugindesc v1.85 Adds the ability to customize MP styling and recovery for each class
+* @plugindesc v1.9 Adds the ability to customize MP styling and recovery for each class
 *
 * @author Aesica
 *
@@ -65,7 +65,7 @@ Aesica.Toolkit.customMpVersion = 1.0;
 * const color2 = sprite._color2;
 * const label = user.mpA;
 *
-* It should now work as expected.
+* It should now work as expected, but full compatibility is not guaranteed.
 *
 * ----------------------------------------------------------------------
 * MP Bar Styling
@@ -88,6 +88,15 @@ Aesica.Toolkit.customMpVersion = 1.0;
 * damage formula box, etc) with other functions/plugins/customizations.  Note
 * That unlike <MP Name: x>, this won't change anything
 * 
+* <MP Icon: x>
+* Changes the icon for "MP" into x for a given class.
+* <MP Icon: 80>
+* Replaces all instances of the default MP icon (if specified in the plugin
+* parameters) with a different icon.  This icon can be accessed for other uses
+* using Game_BattlerBase.prototype.mpI (so a.mpI in the combat formula box etc).
+* This setting has no effect if MP is set to empty (to enable text labels) in
+* the Gauge Icons plugin paramter.
+*
 * <MP Gauge Color: color1, color2>
 * Changes the color1 and color2 of the MP gauge for a given class.  This can
 * be an indexed color based on /img/system/Window.png, or it can be a hex
@@ -222,6 +231,7 @@ Aesica.Toolkit.customMpVersion = 1.0;
 	$$.params.mpGaugeColor2Default = +$$.pluginParameters["Default MP Gauge Color 2"] || 23;
 	$$.params.mpCostColorDefault = +$$.pluginParameters["Default MP Cost Color"] || 23;
 	$$.params.skillCostFontSize = +$$.pluginParameters["Skill Cost Font Size"] || 18;
+	$$.params.gaugeIcons = String($$.pluginParameters["Gauge Icons"]).split(",").map(x => { x = x.trim(); return (x === "" ? undefined : (+x || 0)) });
 /**-------------------------------------------------------------------
 	Aesica.Toolkit: Note tag parsing functions
 //-------------------------------------------------------------------*/	
@@ -254,10 +264,10 @@ Aesica.Toolkit.customMpVersion = 1.0;
 				{
 					if (Aesica.Toolkit.tagExists.call($dataClasses[this._classId], tag)) value.push(Aesica.Toolkit.getTag.call($dataClasses[this._classId], tag));
 					equip = this.weapons().concat(this.armors());
-					for (i in equip){ if (Aesica.Toolkit.tagExists.call(equip[i], tag)) value.push(Aesica.Toolkit.getTag.call(equip[i], tag)); }
+					for (let e of equip){ if (Aesica.Toolkit.tagExists.call(e, tag)) value.push(Aesica.Toolkit.getTag.call(e, tag)); }
 				}
 				state = this.states();
-				for (i in state){ if (Aesica.Toolkit.tagExists.call(state[i], tag)) value.push(Aesica.Toolkit.getTag.call(state[i], tag)); }
+				for (let s of state){ if (Aesica.Toolkit.tagExists.call(s, tag)) value.push(Aesica.Toolkit.getTag.call(s, tag)); }
 			}
 			return deepScan ? value : (value[0] ? value[0] : false);
 		}
@@ -270,16 +280,23 @@ Aesica.Toolkit.customMpVersion = 1.0;
 		mpName: { get: function()
 		{
 			var sReturn;
-			if (this.isActor()) sReturn = Aesica.Toolkit.getTag.call($dataClasses[this._classId], "MP Full Name")
+			if (this.isActor()) sReturn = Aesica.Toolkit.getTag.call($dataClasses[this._classId], "MP Full Name");
 			else sReturn = Aesica.Toolkit.getTag.call(this.enemy(), "MP Full Name");		
 			return sReturn || TextManager.mp;
 		}, configurable: true },
 		mpA: { get: function()
 		{
 			var sReturn;
-			if (this.isActor()) sReturn = Aesica.Toolkit.getTag.call($dataClasses[this._classId], "MP Name")
+			if (this.isActor()) sReturn = Aesica.Toolkit.getTag.call($dataClasses[this._classId], "MP Name");
 			else sReturn = Aesica.Toolkit.getTag.call(this.enemy(), "MP Name");		
 			return sReturn || TextManager.mpA;
+		}, configurable: true },
+		mpI: { get: function()
+		{
+			let result;
+			if (this.isActor()) result = Aesica.Toolkit.getTag.call($dataClasses[this._classId], "MP Icon");
+			else result = Aesica.Toolkit.getTag.call(this.enemy(), "MP Icon");
+			return result || 0;
 		}, configurable: true },
 		mpColor1: { get: function()
 		{
@@ -355,8 +372,8 @@ Aesica.Toolkit.customMpVersion = 1.0;
 		}
 		else if (statusType === "time")
 		{
-			this._color1 = ColorManager.ctGaugeColor1();
-			this._color2 = ColorManager.ctGaugeColor2();
+			// don't cache the colors so AES_CoreEngine's dynamic coloring can work its magic
+			this._label = "";
 		}
 		else
 		{
@@ -367,8 +384,34 @@ Aesica.Toolkit.customMpVersion = 1.0;
 		$$.Sprite_Gauge_setup.call(this, battler, statusType);		
 	};
 	Sprite_Gauge.prototype.label = function(){ return this._label; };
-	Sprite_Gauge.prototype.gaugeColor1 = function(){ return this._color1; };
-	Sprite_Gauge.prototype.gaugeColor2 = function(){ return this._color2; };
+	$$.Sprite_Gauge_gaugeColor1 = Sprite_Gauge.prototype.gaugeColor1;
+	Sprite_Gauge.prototype.gaugeColor1 = function()
+	{
+		return this._color1 === undefined ? $$.Sprite_Gauge_gaugeColor1.call(this) : this._color1;
+	};
+	$$.Sprite_Gauge_gaugeColor2 = Sprite_Gauge.prototype.gaugeColor2;
+	Sprite_Gauge.prototype.gaugeColor2 = function()
+	{
+		return this._color2 === undefined ? $$.Sprite_Gauge_gaugeColor2.call(this) : this._color2;
+	};
+	/*
+	Window_StatusBase.prototype.placeGauge = function(actor, type, x, y, icon=null)
+	{
+		const key = "actor%1-gauge-%2".format(actor.actorId(), type);
+		const sprite = this.createInnerSprite(key, Sprite_Gauge);
+		sprite.setup(actor, type);
+		sprite.move(x + 32, y);
+		if (icon === null)
+		{
+			if (type === "hp") icon = $$.params.gaugeIcons[0] || 0;
+			else if (type === "mp") icon = sprite._battler.mpI ? sprite._battler.mpI : ($$.params.gaugeIcons[1] || 0);
+			else if (type === "tp") icon = $$.params.gaugeIcons[2] || 0;
+		}
+		if (icon !== undefined) sprite._label = "";
+		if (icon) this.drawTextEx("\\i[" + icon + "]", x, y, ImageManager.iconWidth);
+		sprite.show();
+	};
+	*/
 	Window_SkillList.prototype.drawSkillCost = function(skill, x, y, width)
 	{
 		this.contents.fontSize = $$.params.skillCostFontSize;
@@ -424,12 +467,14 @@ Aesica.Toolkit.customMpVersion = 1.0;
 /**-------------------------------------------------------------------
 	Recovery functions
 //-------------------------------------------------------------------*/
-	$$.BattleManager_processVictory = BattleManager.processVictory;
-	BattleManager.processVictory = function()
-	{
-		$$.BattleManager_processVictory.call(this);
+	
+	$$.BattleManager_endBattle = BattleManager.endBattle;
+	BattleManager.endBattle = function(result)
+	{	
+		$$.BattleManager_endBattle.call(this, result);
 		$gameParty.afterBattleRecovery();
 	};
+	
 	Game_Party.prototype.afterBattleRecovery = function()
 	{
 		for (let member of $gameParty.members()) member.afterBattleRecovery();
@@ -445,11 +490,11 @@ Aesica.Toolkit.customMpVersion = 1.0;
 			mpFormulaList = actor.getTag("After Battle Recover MP", true);
 			if (!actor.isStateAffected(1))
 			{
-				for (i in hpFormulaList)
+				for (let f of hpFormulaList)
 				{
 					try
 					{
-						rawEval = hpFormulaList[i];
+						rawEval = f;
 						actor.gainHp(Math.floor(+eval(rawEval)) || 0);
 					}
 					catch(e)
@@ -457,11 +502,11 @@ Aesica.Toolkit.customMpVersion = 1.0;
 						console.log("AES_CustomMP: Eval error in <After Battle Recover HP> => " + rawEval);
 					}
 				}
-				for (i in mpFormulaList)
+				for (let f of mpFormulaList)
 				{
 					try
 					{
-						rawEval = mpFormulaList[i];
+						rawEval = f;
 						actor.gainMp(Math.floor(+eval(rawEval)) || 0);
 					}
 					catch(e)
@@ -492,9 +537,9 @@ Aesica.Toolkit.customMpVersion = 1.0;
 		var actor = this;
 		var hitList = ["certain", "physical", "magical"];
 		var current, formula;
-		for (i in offensiveGainList)
+		for (let g of offensiveGainList)
 		{
-			current = offensiveGainList[i].split(",");
+			current = g.split(",");
 			formula = current.shift();
 			if (current.length === 0 || current.join(" ").search(hitList[hitType]) > -1)
 			{
@@ -508,9 +553,9 @@ Aesica.Toolkit.customMpVersion = 1.0;
 				}
 			}
 		}
-		for (i in modifierList)
+		for (let m of modifierList)
 		{
-			multiplier = +eval(modifierList[i]);
+			multiplier = +eval(m);
 			if (isNaN(multiplier)) multiplier = 1;
 			result *= multiplier;
 		}
